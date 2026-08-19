@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - MindCare</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/dashboard.html">MindCare</a>
+  <button id="logout" class="text-button">Logout</button>
+</header>
+<main class="container">
+  <section class="dashboard-head">
+    <div>
+      <p class="eyebrow">YOUR SPACE</p>
+      <h1>Hi, <span id="userName">there</span> 👋</h1>
+      <p>Take a moment for yourself today.</p>
+    </div>
+  </section>
+
+  <section class="quick-grid">
+    <a href="/chatbot.html" class="quick-card"><span>💬</span><h3>Talk to AI</h3><p>Share what's on your mind.</p></a>
+    <a href="/mood.html" class="quick-card"><span>🌿</span><h3>Mood Tracker</h3><p>Record how you're feeling.</p></a>
+    <a href="/journal.html" class="quick-card"><span>📝</span><h3>My Journal</h3><p>Write privately and reflect.</p></a>
+    <a href="/wellness.html" class="quick-card"><span>🫁</span><h3>Wellness</h3><p>Try a short calming activity.</p></a>
+    <a href="/consultants.html" class="quick-card"><span>🤝</span><h3>Professional Support</h3><p>Explore counselor information.</p></a>
+  </section>
+
+  <section class="panel">
+    <h2>Recent mood entries</h2>
+    <div id="moods">Loading...</div>
+  </section>
+</main>
+<script>
+const token=localStorage.getItem("token");
+if(!token) location.href="/login.html";
+const user=JSON.parse(localStorage.getItem("user")||"{}");
+document.getElementById("userName").textContent=user.name||"there";
+document.getElementById("logout").onclick=()=>{localStorage.clear();location.href="/";};
+fetch("/api/moods",{headers:{Authorization:"Bearer "+token}})
+.then(r=>r.json()).then(items=>{
+ const box=document.getElementById("moods");
+ if(!items.length){box.innerHTML="<p>No mood entries yet. Add your first one from Mood Tracker.</p>";return;}
+ box.innerHTML=items.slice(0,5).map(x=>`<div class="list-row"><b>${x.mood}</b><span>${x.score}/10 • ${new Date(x.createdAt).toLocaleDateString()}</span></div>`).join("");
+});
+</script>
+</body>
+</html>

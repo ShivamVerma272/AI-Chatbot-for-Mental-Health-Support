@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - MindCare</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="center-page">
+
+  <div class="auth-card">
+
+    <a class="brand" href="/">MindCare</a>
+
+    <h1>Create your account</h1>
+    <p>It only takes a minute.</p>
+
+    <form id="registerForm" class="form">
+
+      <!-- Full Name -->
+      <input
+        id="name"
+        type="text"
+        placeholder="Full name"
+        required
+      >
+
+      <!-- Email -->
+      <input
+        id="email"
+        type="email"
+        placeholder="Email"
+        required
+      >
+
+      <!-- Password -->
+      <input
+        id="password"
+        type="password"
+        placeholder="Password (6+ characters)"
+        minlength="6"
+        required
+      >
+
+      <!-- Confirm Password -->
+      <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Confirm password"
+        minlength="6"
+        required
+      >
+
+      <button class="button" type="submit">
+        Create account
+      </button>
+
+    </form>
+
+    <p id="result" class="result"></p>
+
+    <p>
+      Already registered?
+      <a href="/login.html">Login</a>
+    </p>
+
+  </div>
+
+
+<script>
+
+const form = document.getElementById("registerForm");
+
+form.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+  const result = document.getElementById("result");
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+
+
+  // Check all fields
+  if (!name || !email || !password || !confirmPassword) {
+    result.textContent = "All fields are required";
+    return;
+  }
+
+
+  // Check password length
+  if (password.length < 6) {
+    result.textContent = "Password must be at least 6 characters";
+    return;
+  }
+
+
+  // Check passwords
+  if (password !== confirmPassword) {
+    result.textContent = "Passwords do not match";
+    return;
+  }
+
+
+  result.textContent = "Creating account...";
+
+
+  try {
+
+    const res = await fetch("/api/auth/register", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password
+      })
+
+    });
+
+
+    const data = await res.json();
+
+
+    if (res.ok) {
+
+      localStorage.setItem("token", data.token);
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
+
+      result.textContent = "Account created successfully!";
+
+      setTimeout(() => {
+        location.href = "/dashboard.html";
+      }, 500);
+
+    } else {
+
+      result.textContent =
+        data.message || "Could not create account";
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    result.textContent =
+      "Server error. Please try again.";
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>

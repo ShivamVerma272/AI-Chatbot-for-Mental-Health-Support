@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Mood Tracker - MindCare</title><link rel="stylesheet" href="/css/style.css"></head>
+<body><header class="topbar"><a class="brand" href="/dashboard.html">MindCare</a><a href="/dashboard.html">Dashboard</a></header>
+<main class="container narrow"><div class="page-title"><p class="eyebrow">MOOD TRACKER</p><h1>How are you feeling?</h1><p>A quick check-in can help you notice patterns over time.</p></div>
+<section class="panel"><form id="moodForm" class="form">
+<select id="mood" required><option value="">Choose your mood</option><option>Happy</option><option>Calm</option><option>Normal</option><option>Stressed</option><option>Sad</option><option>Angry</option></select>
+<label>How would you rate today? <b id="scoreText">5</b>/10</label><input id="score" type="range" min="1" max="10" value="5">
+<textarea id="note" placeholder="Want to add a note? (optional)"></textarea><button class="button">Save mood</button></form><p id="result" class="result"></p></section>
+<section class="panel"><h2>Recent entries</h2><div id="history"></div></section></main>
+<script>
+const token=localStorage.getItem("token");if(!token)location.href="/login.html";
+score.oninput=()=>scoreText.textContent=score.value;
+async function load(){const r=await fetch("/api/moods",{headers:{Authorization:"Bearer "+token}});const a=await r.json();history.innerHTML=a.map(x=>`<div class="list-row"><b>${x.mood}</b><span>${x.score}/10 • ${new Date(x.createdAt).toLocaleDateString()}</span></div>`).join("")||"<p>No entries yet.</p>";}
+moodForm.onsubmit=async e=>{e.preventDefault();const r=await fetch("/api/moods",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token},body:JSON.stringify({mood:mood.value,score:Number(score.value),note:note.value})});result.textContent=r.ok?"Mood saved.":"Could not save mood.";if(r.ok){moodForm.reset();score.value=5;scoreText.textContent="5";load();}};
+load();
+</script></body></html>

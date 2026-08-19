@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - MindCare</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="center-page">
+  <div class="auth-card">
+    <a class="brand" href="/">MindCare</a>
+    <h1>Welcome back</h1>
+    <p>Log in to continue.</p>
+    <form id="loginForm" class="form">
+      <input id="email" type="email" placeholder="Email" required>
+      <input id="password" type="password" placeholder="Password" required>
+      <button class="button" type="submit">Login</button>
+    </form>
+    <p id="result" class="result"></p>
+    <p>New here? <a href="/register.html">Create an account</a></p>
+  </div>
+<script>
+const form=document.getElementById("loginForm");
+form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const result=document.getElementById("result");
+  result.textContent="Logging in...";
+  const res=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:email.value,password:password.value})});
+  const data=await res.json();
+  if(res.ok){localStorage.setItem("token",data.token);localStorage.setItem("user",JSON.stringify(data.user));location.href="/dashboard.html";}
+  else result.textContent=data.message||"Login failed";
+});
+</script>
+</body>
+</html>

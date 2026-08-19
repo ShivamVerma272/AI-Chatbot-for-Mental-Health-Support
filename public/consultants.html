@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Professional Support - MindCare</title><link rel="stylesheet" href="/css/style.css"></head>
+<body><header class="topbar"><a class="brand" href="/dashboard.html">MindCare</a><a href="/dashboard.html">Dashboard</a></header>
+<main class="container"><div class="page-title"><p class="eyebrow">PROFESSIONAL SUPPORT</p><h1>People you can reach out to.</h1><p>These profiles are sample data for the student project.</p></div>
+<div id="cards" class="feature-grid"></div>
+<section class="panel" id="booking"><h2>Request an appointment</h2><form id="form" class="form"><select id="counselor" required><option value="">Choose counselor</option></select><input id="date" type="date" required><input id="time" type="time" required><textarea id="reason" placeholder="What would you like support with?"></textarea><button class="button">Send request</button></form><p id="result" class="result"></p></section></main>
+<script>
+const token=localStorage.getItem("token");if(!token)location.href="/login.html";
+fetch("/api/counselors").then(r=>r.json()).then(a=>{cards.innerHTML=a.map(x=>`<article class="panel"><h2>${x.name}</h2><b>${x.role}</b><p>${x.about}</p><p>${x.experience} experience</p><button class="button" onclick="pick('${x.name}')">Request appointment</button></article>`).join("");counselor.innerHTML+=[...a].map(x=>`<option>${x.name}</option>`).join("");});
+function pick(name){counselor.value=name;booking.scrollIntoView({behavior:"smooth"});}
+form.onsubmit=async e=>{e.preventDefault();const r=await fetch("/api/appointments",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token},body:JSON.stringify({counselor:counselor.value,date:date.value,time:time.value,reason:reason.value})});const d=await r.json();result.textContent=r.ok?"Appointment request sent.":"Could not send request."};
+</script></body></html>

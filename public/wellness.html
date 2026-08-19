@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Wellness - MindCare</title><link rel="stylesheet" href="/css/style.css"></head>
+<body><header class="topbar"><a class="brand" href="/dashboard.html">MindCare</a><a href="/dashboard.html">Dashboard</a></header>
+<main class="container"><div class="page-title"><p class="eyebrow">WELLNESS TOOLS</p><h1>Small things that can help.</h1><p>You don't need to fix everything at once.</p></div>
+<section class="feature-grid">
+<article class="panel"><h2>Breathing exercise</h2><div id="breath" class="breath">Ready</div><button id="start" class="button">Start 1 minute</button><p>Follow the circle: breathe in, hold, then breathe out slowly.</p></article>
+<article class="panel"><h2>Quick reset</h2><ul class="tips"><li>Put your phone away for five minutes.</li><li>Drink some water.</li><li>Take a short walk.</li><li>Write down the one thing you need to do next.</li></ul></article>
+<article class="panel"><h2>Today's reminder</h2><p class="quote">You are allowed to take a break. Rest is part of getting things done.</p></article>
+</section></main>
+<script>
+let timer;start.onclick=()=>{clearInterval(timer);let left=60;breath.textContent="Breathe in";timer=setInterval(()=>{left--;breath.textContent=left%8<3?"Hold":left%8<6?"Breathe out":"Breathe in";if(left<=0){clearInterval(timer);breath.textContent="Done. Take a moment."; }},1000);}
+</script></body></html>

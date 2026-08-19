@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Journal - MindCare</title><link rel="stylesheet" href="/css/style.css"></head>
+<body><header class="topbar"><a class="brand" href="/dashboard.html">MindCare</a><a href="/dashboard.html">Dashboard</a></header>
+<main class="container narrow"><div class="page-title"><p class="eyebrow">PRIVATE JOURNAL</p><h1>Put your thoughts into words.</h1></div>
+<section class="panel"><form id="journalForm" class="form"><input id="title" placeholder="Entry title" required><textarea id="content" rows="7" placeholder="Write anything you'd like to remember..." required></textarea><button class="button">Save entry</button></form><p id="result" class="result"></p></section>
+<section class="panel"><h2>Previous entries</h2><div id="entries"></div></section></main>
+<script>
+const token=localStorage.getItem("token");if(!token)location.href="/login.html";
+async function load(){const r=await fetch("/api/journal",{headers:{Authorization:"Bearer "+token}});const a=await r.json();entries.innerHTML=a.map(x=>`<article class="journal-entry"><h3>${x.title}</h3><small>${new Date(x.createdAt).toLocaleString()}</small><p>${x.content.replace(/</g,"&lt;")}</p></article>`).join("")||"<p>No journal entries yet.</p>";}
+journalForm.onsubmit=async e=>{e.preventDefault();const r=await fetch("/api/journal",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token},body:JSON.stringify({title:title.value,content:content.value})});result.textContent=r.ok?"Entry saved.":"Could not save entry.";if(r.ok){journalForm.reset();load();}};load();
+</script></body></html>

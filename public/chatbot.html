@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Chat - MindCare</title><link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/dashboard.html">MindCare</a><a href="/dashboard.html">Dashboard</a></header>
+<main class="container narrow">
+  <div class="page-title"><p class="eyebrow">AI SUPPORT</p><h1>What's on your mind?</h1><p>You can talk about stress, college pressure, relationships, sleep or just how your day went.</p></div>
+  <section class="chat-panel">
+    <div id="messages" class="messages"><div class="bubble bot"><b>MindCare</b><br>Hey. I'm here to listen. How are you feeling today?</div></div>
+    <form id="chatForm" class="chat-form"><input id="message" placeholder="Type a message..." autocomplete="off" required><button class="button">Send</button></form>
+  </section>
+</main>
+<script>
+const token=localStorage.getItem("token"); if(!token) location.href="/login.html";
+const messages=document.getElementById("messages"), form=document.getElementById("chatForm"), input=document.getElementById("message");
+function add(text,who){const d=document.createElement("div");d.className="bubble "+who;d.innerHTML="<b>"+(who==="user"?"You":"MindCare")+"</b><br>"+text.replace(/\\n/g,"<br>");messages.appendChild(d);messages.scrollTop=messages.scrollHeight;}
+form.onsubmit=async e=>{e.preventDefault();const text=input.value.trim();if(!text)return;add(text,"user");input.value="";input.disabled=true;try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+token},body:JSON.stringify({message:text})});const d=await r.json();add(d.reply||d.message||"I'm having trouble responding right now.","bot");}catch{add("Please check your connection and try again.","bot")}finally{input.disabled=false;input.focus();}};
+</script>
+</body>
+</html>
